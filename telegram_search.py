@@ -10,7 +10,7 @@ api_hash = os.getenv("API_HASH")
 bot_token = os.getenv("BOT_TOKEN")
 GROUP_USERNAME = 'absolute_cinema_freaks'  # your public group username
 OWNER_ID = int(os.getenv("OWNER_ID"))      # your Telegram user ID
-DELETE_AFTER = 100                          # seconds (5 minutes)
+DELETE_AFTER = 45                          # seconds (5 minutes)
 
 client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
