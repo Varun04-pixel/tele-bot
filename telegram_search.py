@@ -1,5 +1,5 @@
 from telethon import TelegramClient, events
-import csv, os
+import csv, os, asyncio
 from dotenv import load_dotenv
 
 # Load secrets from .env file
@@ -9,9 +9,12 @@ api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv("API_HASH")
 bot_token = os.getenv("BOT_TOKEN")
 GROUP_USERNAME = 'absolute_cinema_freaks'  # your public group username
+OWNER_ID = int(os.getenv("OWNER_ID"))      # your Telegram user ID
+DELETE_AFTER = 100                          # time in seconds
 
 client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
+# --- Search Handler ---
 @client.on(events.NewMessage(pattern=r'/search (.+)'))
 async def search_handler(event):
     keyword = event.pattern_match.group(1).strip()
@@ -37,5 +40,16 @@ async def search_handler(event):
 
     await event.reply(reply_text)
 
-print("🤖 Bot is running on Render...")
+# --- Auto-delete Handler ---
+@client.on(events.NewMessage)
+async def auto_delete(event):
+    # Ignore messages sent by you (the owner)
+    if event.sender_id != OWNER_ID:
+        await asyncio.sleep(DELETE_AFTER)
+        try:
+            await event.delete()
+        except:
+            pass  # ignore if already deleted
+
+print("🤖 Bot is running...")
 client.run_until_disconnected()
